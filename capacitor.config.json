@@ -1,0 +1,9 @@
+{
+  "appId": "app.lovable.0b5b20468c8642b29f4302a75a6aa5b5",
+  "appName": "Visitor Book",
+  "webDir": "dist",
+  "server": {
+    "url": "https://0b5b2046-8c86-42b2-9f43-02a75a6aa5b5.lovableproject.com?forceHideBadge=true",
+    "cleartext": true
+  }
+}

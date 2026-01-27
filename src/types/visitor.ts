@@ -5,7 +5,17 @@ export interface Visitor {
   purpose: string;
   host: string;
   company?: string;
+  photo?: string;
   checkInTime: string;
   checkOutTime?: string;
-  status: 'checked-in' | 'checked-out';
+  status: 'pending' | 'approved' | 'rejected' | 'checked-in' | 'checked-out';
+  approvedAt?: string;
+  approvedBy?: string;
+}
+
+export interface Host {
+  id: string;
+  name: string;
+  phone: string;
+  flatNumber: string;
 }

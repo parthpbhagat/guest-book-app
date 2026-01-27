@@ -23,10 +23,38 @@ export const useVisitors = () => {
       ...visitor,
       id: crypto.randomUUID(),
       checkInTime: new Date().toISOString(),
-      status: 'checked-in',
+      status: 'pending',
     };
     saveToStorage([newVisitor, ...visitors]);
     return newVisitor;
+  };
+
+  const approveVisitor = (id: string, approvedBy: string) => {
+    const updated = visitors.map((v) =>
+      v.id === id
+        ? { 
+            ...v, 
+            status: 'checked-in' as const, 
+            approvedAt: new Date().toISOString(),
+            approvedBy 
+          }
+        : v
+    );
+    saveToStorage(updated);
+  };
+
+  const rejectVisitor = (id: string, rejectedBy: string) => {
+    const updated = visitors.map((v) =>
+      v.id === id
+        ? { 
+            ...v, 
+            status: 'rejected' as const, 
+            approvedAt: new Date().toISOString(),
+            approvedBy: rejectedBy 
+          }
+        : v
+    );
+    saveToStorage(updated);
   };
 
   const checkOutVisitor = (id: string) => {
@@ -55,11 +83,35 @@ export const useVisitors = () => {
     );
   };
 
+  const filterByDate = (startDate: Date | null, endDate: Date | null) => {
+    if (!startDate && !endDate) return visitors;
+    
+    return visitors.filter((v) => {
+      const checkIn = new Date(v.checkInTime);
+      if (startDate && endDate) {
+        return checkIn >= startDate && checkIn <= endDate;
+      }
+      if (startDate) {
+        return checkIn >= startDate;
+      }
+      if (endDate) {
+        return checkIn <= endDate;
+      }
+      return true;
+    });
+  };
+
+  const getPendingVisitors = () => visitors.filter((v) => v.status === 'pending');
+
   return {
     visitors,
     addVisitor,
+    approveVisitor,
+    rejectVisitor,
     checkOutVisitor,
     deleteVisitor,
     searchVisitors,
+    filterByDate,
+    getPendingVisitors,
   };
 };
