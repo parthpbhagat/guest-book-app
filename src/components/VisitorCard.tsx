@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { LogOut, Trash2, User, Phone, Building, Clock, Target, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
+import { VisitorBadge } from './VisitorBadge';
 
 interface VisitorCardProps {
   visitor: Visitor;
@@ -92,6 +93,9 @@ export const VisitorCard = ({ visitor, hosts, onCheckOut, onDelete }: VisitorCar
         )}
 
         <div className="mt-4 flex gap-2">
+          {(isCheckedIn || visitor.status === 'checked-out') && (
+            <VisitorBadge visitor={visitor} host={host} />
+          )}
           {isCheckedIn && (
             <Button
               variant="outline"

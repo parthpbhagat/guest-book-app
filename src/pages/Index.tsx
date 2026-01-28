@@ -3,11 +3,13 @@ import { VisitorForm } from '@/components/VisitorForm';
 import { VisitorLog } from '@/components/VisitorLog';
 import { PendingApprovals } from '@/components/PendingApprovals';
 import { HostManagement } from '@/components/HostManagement';
+import { AnalyticsDashboard } from '@/components/AnalyticsDashboard';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useVisitors } from '@/hooks/useVisitors';
 import { useHosts } from '@/hooks/useHosts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { ClipboardList, UserPlus, Building2, Bell, Home } from 'lucide-react';
+import { ClipboardList, UserPlus, Building2, Bell, Home, BarChart3 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Index = () => {
@@ -54,21 +56,24 @@ const Index = () => {
     <div className="min-h-screen bg-background safe-bottom">
       {/* Header */}
       <header className="sticky top-0 z-50 border-b bg-card/80 backdrop-blur-lg">
-        <div className="mx-auto flex max-w-lg items-center gap-3 px-4 py-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-button">
-            <Building2 className="h-5 w-5 text-primary-foreground" />
+        <div className="mx-auto flex max-w-lg items-center justify-between gap-3 px-4 py-3 sm:max-w-2xl lg:max-w-4xl">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-button">
+              <Building2 className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-foreground">Visitor Book</h1>
+              <p className="text-xs text-muted-foreground">Entry Management System</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-lg font-bold text-foreground">Visitor Book</h1>
-            <p className="text-xs text-muted-foreground">Entry Management System</p>
-          </div>
+          <ThemeToggle />
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="mx-auto max-w-lg px-4 py-6">
+      <main className="mx-auto max-w-lg px-4 py-6 sm:max-w-2xl lg:max-w-4xl">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="approvals" className="relative flex items-center gap-1 text-xs">
               <Bell className="h-4 w-4" />
               <span className="hidden sm:inline">Approvals</span>
@@ -85,6 +90,10 @@ const Index = () => {
             <TabsTrigger value="log" className="flex items-center gap-1 text-xs">
               <ClipboardList className="h-4 w-4" />
               <span className="hidden sm:inline">Log</span>
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-1 text-xs">
+              <BarChart3 className="h-4 w-4" />
+              <span className="hidden sm:inline">Analytics</span>
             </TabsTrigger>
             <TabsTrigger value="owners" className="flex items-center gap-1 text-xs">
               <Home className="h-4 w-4" />
@@ -114,6 +123,10 @@ const Index = () => {
               onSearch={searchVisitors}
               onFilterByDate={filterByDate}
             />
+          </TabsContent>
+
+          <TabsContent value="analytics" className="mt-6">
+            <AnalyticsDashboard visitors={visitors} hosts={hosts} />
           </TabsContent>
 
           <TabsContent value="owners" className="mt-6">

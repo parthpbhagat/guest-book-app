@@ -1,9 +1,10 @@
 import { Visitor, Host } from '@/types/visitor';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, XCircle, User, Phone, Building, Clock, Bell } from 'lucide-react';
+import { CheckCircle, XCircle, User, Phone, Building, Clock, Bell, MessageCircle } from 'lucide-react';
 import { format } from 'date-fns';
+import { OwnerNotification } from './OwnerNotification';
 
 interface PendingApprovalsProps {
   visitors: Visitor[];
@@ -89,6 +90,15 @@ export const PendingApprovals = ({ visitors, hosts, onApprove, onReject }: Pendi
                   <Clock className="h-3 w-3" />
                   {format(new Date(visitor.checkInTime), 'dd MMM, HH:mm')}
                 </p>
+              </div>
+
+              {/* Notify Owner */}
+              <div className="mt-3">
+                <p className="mb-2 flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                  <MessageCircle className="h-3 w-3" />
+                  Notify Owner
+                </p>
+                <OwnerNotification visitor={visitor} host={host} />
               </div>
 
               <div className="mt-4 flex gap-2">
