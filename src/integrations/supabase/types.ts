@@ -14,7 +14,361 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      blacklisted_visitors: {
+        Row: {
+          blacklisted_at: string
+          blacklisted_by: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          phone: string
+          photo: string | null
+          property_id: string | null
+          reason: string | null
+          user_id: string
+        }
+        Insert: {
+          blacklisted_at?: string
+          blacklisted_by?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          phone: string
+          photo?: string | null
+          property_id?: string | null
+          reason?: string | null
+          user_id: string
+        }
+        Update: {
+          blacklisted_at?: string
+          blacklisted_by?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          phone?: string
+          photo?: string | null
+          property_id?: string | null
+          reason?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blacklisted_visitors_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hosts: {
+        Row: {
+          created_at: string
+          flat_number: string
+          id: string
+          name: string
+          phone: string
+          property_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          flat_number: string
+          id?: string
+          name: string
+          phone: string
+          property_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          flat_number?: string
+          id?: string
+          name?: string
+          phone?: string
+          property_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hosts_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pre_registered_visitors: {
+        Row: {
+          created_at: string
+          frequency: string
+          host_id: string | null
+          id: string
+          is_active: boolean
+          name: string
+          phone: string
+          photo: string | null
+          property_id: string | null
+          purpose: string
+          updated_at: string
+          user_id: string
+          valid_from: string | null
+          valid_until: string | null
+        }
+        Insert: {
+          created_at?: string
+          frequency?: string
+          host_id?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          phone: string
+          photo?: string | null
+          property_id?: string | null
+          purpose: string
+          updated_at?: string
+          user_id: string
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Update: {
+          created_at?: string
+          frequency?: string
+          host_id?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          phone?: string
+          photo?: string | null
+          property_id?: string | null
+          purpose?: string
+          updated_at?: string
+          user_id?: string
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pre_registered_visitors_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "hosts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pre_registered_visitors_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      properties: {
+        Row: {
+          address: string
+          created_at: string
+          id: string
+          name: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          created_at?: string
+          id?: string
+          name: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          id?: string
+          name?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      scheduled_visits: {
+        Row: {
+          confirmation_token: string | null
+          created_at: string
+          host_id: string | null
+          id: string
+          notes: string | null
+          property_id: string | null
+          purpose: string
+          scheduled_date: string
+          scheduled_time: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          visitor_company: string | null
+          visitor_name: string
+          visitor_phone: string
+        }
+        Insert: {
+          confirmation_token?: string | null
+          created_at?: string
+          host_id?: string | null
+          id?: string
+          notes?: string | null
+          property_id?: string | null
+          purpose: string
+          scheduled_date: string
+          scheduled_time?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          visitor_company?: string | null
+          visitor_name: string
+          visitor_phone: string
+        }
+        Update: {
+          confirmation_token?: string | null
+          created_at?: string
+          host_id?: string | null
+          id?: string
+          notes?: string | null
+          property_id?: string | null
+          purpose?: string
+          scheduled_date?: string
+          scheduled_time?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          visitor_company?: string | null
+          visitor_name?: string
+          visitor_phone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_visits_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "hosts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scheduled_visits_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      visitors: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          check_in_time: string
+          check_out_time: string | null
+          company: string | null
+          created_at: string
+          host_id: string | null
+          id: string
+          name: string
+          phone: string
+          photo: string | null
+          property_id: string | null
+          purpose: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          check_in_time?: string
+          check_out_time?: string | null
+          company?: string | null
+          created_at?: string
+          host_id?: string | null
+          id?: string
+          name: string
+          phone: string
+          photo?: string | null
+          property_id?: string | null
+          purpose: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          check_in_time?: string
+          check_out_time?: string | null
+          company?: string | null
+          created_at?: string
+          host_id?: string | null
+          id?: string
+          name?: string
+          phone?: string
+          photo?: string | null
+          property_id?: string | null
+          purpose?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visitors_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "hosts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "visitors_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
