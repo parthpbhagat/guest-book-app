@@ -20,14 +20,17 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "robots.txt"],
       manifest: {
-        name: "Visitor Book - Entry Management",
+        name: "Visitor Book - Entry Management System",
         short_name: "Visitor Book",
-        description: "Digital visitor entry book management system",
-        theme_color: "#2563eb",
-        background_color: "#f8fafc",
+        description: "Professional digital visitor entry and gate management system for societies, offices, and buildings",
+        theme_color: "#1e40af",
+        background_color: "#0f172a",
         display: "standalone",
         orientation: "portrait",
         start_url: "/",
+        categories: ["business", "productivity", "utilities"],
+        lang: "en",
+        dir: "ltr",
         icons: [
           {
             src: "/pwa-192x192.png",
@@ -45,6 +48,15 @@ export default defineConfig(({ mode }) => ({
             type: "image/png",
             purpose: "maskable",
           },
+        ],
+        screenshots: [
+          {
+            src: "/pwa-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            form_factor: "narrow",
+            label: "Visitor Book App"
+          }
         ],
       },
       workbox: {
