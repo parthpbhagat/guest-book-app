@@ -5,5 +5,16 @@
   "server": {
     "url": "https://0b5b2046-8c86-42b2-9f43-02a75a6aa5b5.lovableproject.com?forceHideBadge=true",
     "cleartext": true
+  },
+  "plugins": {
+    "Camera": {
+      "permissionType": "prompt",
+      "saveToGallery": false
+    }
+  },
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": true
   }
 }
