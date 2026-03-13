@@ -1,64 +1,108 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { Property } from '@/types/visitor';
 
-const STORAGE_KEY = 'properties';
 const ACTIVE_PROPERTY_KEY = 'active_property';
 
 export const useProperties = () => {
   const [properties, setProperties] = useState<Property[]>([]);
-  const [activePropertyId, setActivePropertyId] = useState<string | null>(null);
+  const [activePropertyId, setActivePropertyId] = useState<string | null>(
+    localStorage.getItem(ACTIVE_PROPERTY_KEY)
+  );
+  const [loading, setLoading] = useState(true);
+
+  const fetchProperties = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from('properties')
+      .select('*')
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching properties:', error);
+      return;
+    }
+
+    const mapped: Property[] = (data || []).map(p => ({
+      id: p.id,
+      name: p.name,
+      address: p.address,
+      type: p.type as Property['type'],
+    }));
+
+    setProperties(mapped);
+
+    // Set first property as active if none is set
+    if (mapped.length > 0 && (!activePropertyId || !mapped.find(p => p.id === activePropertyId))) {
+      setActivePropertyId(mapped[0].id);
+      localStorage.setItem(ACTIVE_PROPERTY_KEY, mapped[0].id);
+    }
+    setLoading(false);
+  }, [activePropertyId]);
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    const activeId = localStorage.getItem(ACTIVE_PROPERTY_KEY);
-    
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      setProperties(parsed);
-      // Set first property as active if none is set
-      if (activeId && parsed.find((p: Property) => p.id === activeId)) {
-        setActivePropertyId(activeId);
-      } else if (parsed.length > 0) {
-        setActivePropertyId(parsed[0].id);
-        localStorage.setItem(ACTIVE_PROPERTY_KEY, parsed[0].id);
-      }
+    fetchProperties();
+  }, [fetchProperties]);
+
+  const addProperty = async (property: Omit<Property, 'id'>) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from('properties')
+      .insert({
+        name: property.name,
+        address: property.address,
+        type: property.type,
+        user_id: user.id,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error adding property:', error);
+      return;
     }
-  }, []);
 
-  const saveToStorage = (updatedProperties: Property[]) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProperties));
-    setProperties(updatedProperties);
-  };
+    const newProp: Property = { id: data.id, name: data.name, address: data.address, type: data.type as Property['type'] };
+    const updated = [...properties, newProp];
+    setProperties(updated);
 
-  const addProperty = (property: Omit<Property, 'id'>) => {
-    const newProperty: Property = {
-      ...property,
-      id: crypto.randomUUID(),
-    };
-    const updated = [...properties, newProperty];
-    saveToStorage(updated);
-    
-    // Set as active if it's the first property
     if (updated.length === 1) {
-      setActivePropertyId(newProperty.id);
-      localStorage.setItem(ACTIVE_PROPERTY_KEY, newProperty.id);
+      setActivePropertyId(newProp.id);
+      localStorage.setItem(ACTIVE_PROPERTY_KEY, newProp.id);
     }
-    
-    return newProperty;
+    return newProp;
   };
 
-  const updateProperty = (id: string, updates: Partial<Property>) => {
-    const updated = properties.map((p) =>
-      p.id === id ? { ...p, ...updates } : p
-    );
-    saveToStorage(updated);
+  const updateProperty = async (id: string, updates: Partial<Property>) => {
+    const { error } = await supabase
+      .from('properties')
+      .update(updates)
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error updating property:', error);
+      return;
+    }
+    setProperties(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
   };
 
-  const deleteProperty = (id: string) => {
-    const updated = properties.filter((p) => p.id !== id);
-    saveToStorage(updated);
-    
-    // If deleted property was active, set another one
+  const deleteProperty = async (id: string) => {
+    const { error } = await supabase
+      .from('properties')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting property:', error);
+      return;
+    }
+    const updated = properties.filter(p => p.id !== id);
+    setProperties(updated);
+
     if (activePropertyId === id && updated.length > 0) {
       setActivePropertyId(updated[0].id);
       localStorage.setItem(ACTIVE_PROPERTY_KEY, updated[0].id);
@@ -73,9 +117,7 @@ export const useProperties = () => {
     localStorage.setItem(ACTIVE_PROPERTY_KEY, id);
   };
 
-  const getActiveProperty = () => {
-    return properties.find((p) => p.id === activePropertyId) || null;
-  };
+  const getActiveProperty = () => properties.find(p => p.id === activePropertyId) || null;
 
   return {
     properties,
