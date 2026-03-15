@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { SOUND_OPTIONS, generateSound } from '@/components/NotificationSounds';
 
 export const useNotifications = () => {
   const [permission, setPermission] = useState<NotificationPermission>('default');
@@ -11,9 +12,16 @@ export const useNotifications = () => {
     }
   }, []);
 
+  const playNotificationSound = useCallback(() => {
+    const soundId = localStorage.getItem('notification-sound') || 'classic-bell';
+    const sound = SOUND_OPTIONS.find((s) => s.id === soundId);
+    if (sound) {
+      try { generateSound(sound); } catch { /* ignore audio errors */ }
+    }
+  }, []);
+
   const requestPermission = useCallback(async () => {
     if (!isSupported) return false;
-
     try {
       const result = await Notification.requestPermission();
       setPermission(result);
@@ -26,30 +34,23 @@ export const useNotifications = () => {
 
   const sendNotification = useCallback(
     (title: string, options?: NotificationOptions) => {
-      if (!isSupported || permission !== 'granted') {
-        console.log('Notifications not available or not permitted');
-        return null;
-      }
-
+      if (!isSupported || permission !== 'granted') return null;
       try {
+        playNotificationSound();
         const notification = new Notification(title, {
           icon: '/pwa-192x192.png',
           badge: '/pwa-192x192.png',
+          silent: true,
           ...options,
         });
-
-        notification.onclick = () => {
-          window.focus();
-          notification.close();
-        };
-
+        notification.onclick = () => { window.focus(); notification.close(); };
         return notification;
       } catch (error) {
         console.error('Error sending notification:', error);
         return null;
       }
     },
-    [isSupported, permission]
+    [isSupported, permission, playNotificationSound]
   );
 
   const notifyVisitorArrival = useCallback(
@@ -67,21 +68,11 @@ export const useNotifications = () => {
     (visitorName: string, approved: boolean) => {
       return sendNotification(
         approved ? '✅ Visitor Approved' : '❌ Visitor Rejected',
-        {
-          body: `${visitorName} has been ${approved ? 'approved' : 'rejected'}`,
-          tag: 'visitor-status',
-        }
+        { body: `${visitorName} has been ${approved ? 'approved' : 'rejected'}`, tag: 'visitor-status' }
       );
     },
     [sendNotification]
   );
 
-  return {
-    isSupported,
-    permission,
-    requestPermission,
-    sendNotification,
-    notifyVisitorArrival,
-    notifyApproval,
-  };
+  return { isSupported, permission, requestPermission, sendNotification, notifyVisitorArrival, notifyApproval, playNotificationSound };
 };
